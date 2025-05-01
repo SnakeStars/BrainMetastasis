@@ -2,3 +2,15 @@ name = "BrainMetastasis"
 uuid = "8403d056-6970-4e8e-a8b0-0e1b7a610f9c"
 authors = ["space-station "]
 version = "0.1.0"
+
+[deps]
+MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
+MLJModels = "d491faf4-2d78-11e9-2867-c94bc002c0b7"
+MLJScikitLearnInterface = "5ae90465-5518-4432-b9d2-8a1def2f0cab"
+NearestNeighborModels = "636a865e-7cf4-491e-846c-de09b730eb36"
+
+[compat]
+MLJ = "0.20.7"
+MLJModels = "0.17.9"
+MLJScikitLearnInterface = "0.7.0"
+NearestNeighborModels = "0.2.3"
