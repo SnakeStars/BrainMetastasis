@@ -146,8 +146,53 @@ module BrainMetastasis
     end
 
     function main()
-        Xtrain, Xtest, ytrain, ytest = cleanPreparing("SMOTE")
+        Xtrain, Xtest, ytrain, ytest = cleanPreparing("oversampling")
         models = PreparingBestModels(Xtrain, ytrain)
         modelsReport(models, Xtest, ytest)
+        ShapleyResearch(models, Xtest, 1, "KNN-oversampling")
+        ShapleyResearch(models, Xtest, 2, "DecisionTree-oversampling")
+        ShapleyResearch(models, Xtest, 3, "RandomForest-oversampling")
+        ShapleyResearch(models, Xtest, 4, "SVC-oversampling")
+        ShapleyResearch(models, Xtest, 5, "Log-oversampling")
     end
+
+    function ShapleyResearch(models, Xvalid, i, pl_tit)
+        ϕ = shapley(Xvalid -> predict(models[i], Xvalid), Shapley.MonteCarlo(CPUThreads(), 1024), Xvalid)
+        bar_data = []
+        k = [string(i) for i in keys(ϕ)]
+        for i in ϕ 
+            push!(bar_data, mean(abs.(pdf.(i, 1))))
+        end
+        n = size(bar_data, 1)
+        b = bar(
+            bar_data,
+            yticks=(1:1:n, k),
+            ylims=(0, n+1),
+            orientation=:horizontal,
+            legend=false,
+            xlims=(0, 0.3),
+            title="Global feature importance",
+            xlabel="Mean(abs(Shapley value))",
+        )
+        A = [pdf.(i, 1) for i in ϕ]
+        v = violin(
+            A, 
+            xticks=(1:1:n, k),
+            xlims=(0, n+1),
+            legend=false,
+            title="Local explanation summary",
+            ylabel="SHAP value", 
+            permute=(:y, :x),
+        )
+        fig = plot(
+            b,
+            v,
+            layout=(1, 2),
+            plot_title=pl_tit,
+            size=(1200, 900),
+            margin=(20, :pt)
+            )
+        savefig(fig, pl_tit)
+    end  # function ShapleyResearch
 end # module BrainMetastasis
+
