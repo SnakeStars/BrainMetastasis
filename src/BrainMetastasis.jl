@@ -146,14 +146,15 @@ module BrainMetastasis
     end
 
     function main()
-        Xtrain, Xtest, ytrain, ytest = cleanPreparing("oversampling")
+        Xtrain, Xtest, ytrain, ytest = cleanPreparing("no")
         models = PreparingBestModels(Xtrain, ytrain)
-        modelsReport(models, Xtest, ytest)
-        ShapleyResearch(models, Xtest, 1, "KNN-oversampling")
-        ShapleyResearch(models, Xtest, 2, "DecisionTree-oversampling")
-        ShapleyResearch(models, Xtest, 3, "RandomForest-oversampling")
-        ShapleyResearch(models, Xtest, 4, "SVC-oversampling")
-        ShapleyResearch(models, Xtest, 5, "Log-oversampling")
+        table = modelsReport(models, Xtest, ytest)
+        CSV.write("no-balancing.csv", table)
+        # ShapleyResearch(models, Xtest, 1, "KNN-oversampling")
+        # ShapleyResearch(models, Xtest, 2, "DecisionTree-oversampling")
+        # ShapleyResearch(models, Xtest, 3, "RandomForest-oversampling")
+        # ShapleyResearch(models, Xtest, 4, "SVC-oversampling")
+        # ShapleyResearch(models, Xtest, 5, "Log-oversampling")
     end
 
     function ShapleyResearch(models, Xvalid, i, pl_tit)
